@@ -113,8 +113,11 @@ def login():
 @app.route('/logout')
 def logout():
     """Handle logout of user."""
+    do_logout()
+    flash('See You Soon!')
+    return redirect('/login')
 
-    # IMPLEMENT THIS
+
 
 
 ##############################################################################
@@ -143,7 +146,6 @@ def users_show(user_id):
     """Show user profile."""
 
     user = User.query.get_or_404(user_id)
-    pdb.set_trace()
 
     # snagging messages in order from the database;
     # user.messages won't be in order by default
@@ -213,8 +215,9 @@ def stop_following(follow_id):
 @app.route('/users/profile', methods=["GET", "POST"])
 def profile():
     """Update profile for current user."""
+    form = UserEditForm
 
-    # IMPLEMENT THIS
+    if form.validate_on_submit:
 
 
 @app.route('/users/delete', methods=["POST"])
