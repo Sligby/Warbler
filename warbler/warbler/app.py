@@ -1,4 +1,5 @@
 import os
+import pdb
 
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
@@ -127,6 +128,7 @@ def list_users():
     """
 
     search = request.args.get('q')
+    
 
     if not search:
         users = User.query.all()
@@ -141,6 +143,7 @@ def users_show(user_id):
     """Show user profile."""
 
     user = User.query.get_or_404(user_id)
+    pdb.set_trace()
 
     # snagging messages in order from the database;
     # user.messages won't be in order by default
