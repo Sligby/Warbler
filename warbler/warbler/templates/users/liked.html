@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+{% for like in liked_warbles %}
+    <div class="liked-warble">
+        <p>{{ like.message.text }}</p>
+        <p>Author: {{ like.message.user.username }}</p>
+    </div>
+{% endfor %}
+
+
+{% endblock %}

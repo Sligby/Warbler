@@ -6,7 +6,7 @@
       {% for message in messages %}
 
         <li class="list-group-item">
-          <a href="/messages/{{ message.id }}" class="message-link"/>
+          <a href="/messages/{{ message.id }}" class="message-link"></a>
 
           <a href="/users/{{ user.id }}">
             <img src="{{ user.image_url }}" alt="user image" class="timeline-image">
@@ -17,6 +17,12 @@
             <span class="text-muted">{{ message.timestamp.strftime('%d %B %Y') }}</span>
             <p>{{ message.text }}</p>
           </div>
+          {% if message in user.liked_warbles %}
+            <a href="{{ url_for('like_warble', message_id=message.id) }}" class="unlike-button">Unlike</a>
+          {% else %}
+            <a href="{{ url_for('like_warble', message_id=message.id) }}" class="like-button">Like</a>
+          {% endif %}
+
         </li>
 
       {% endfor %}

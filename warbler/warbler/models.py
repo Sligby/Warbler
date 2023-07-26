@@ -48,6 +48,12 @@ class Likes(db.Model):
         unique=True
     )
 
+    user = db.relationship(
+        'User', backref='liked_warbles')
+
+    message = db.relationship(
+        'Message', backref='likes')
+
 
 class User(db.Model):
     """User in the system."""

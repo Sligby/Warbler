@@ -1,13 +1,12 @@
 import os
 import pdb
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, request, flash, redirect, session, g, url_for
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 
 from forms import UserAddForm, LoginForm, MessageForm, UserEditForm
-from models import db, connect_db, User, Message
-
+from models import db, connect_db, User, Message, Likes
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
@@ -289,7 +288,8 @@ def messages_show(message_id):
     """Show a message."""
 
     msg = Message.query.get(message_id)
-    return render_template('messages/show.html', message=msg)
+    messages = Message.query.all()
+    return render_template('messages/show.html', message=msg, messages=messages)
 
 
 @app.route('/messages/<int:message_id>/delete', methods=["POST"])
@@ -305,6 +305,34 @@ def messages_destroy(message_id):
     db.session.commit()
 
     return redirect(f"/users/{g.user.id}")
+
+    ##############################################################################
+    # like routes
+
+@app.route('/users/like/<int:message_id>', methods=['POST', 'GET'])
+def like_warble(message_id):
+    if not g.user:
+        flash('Access Unauthorized', 'DANGER!!')
+        return redirect('/')
+    message = Message.query.get_or_404(message_id)
+    if message.user != g.user:
+        like = Likes.query.filter_by(user=g.user, message=message).first()
+        if like:
+            db.session.delete(like)
+            return redirect(url_for('liked_warbles', user_id=g.user.id))
+        else:
+            like = Likes(user=g.user, message=message)
+            db.session.add(like)
+            db.session.commit()
+            return redirect(url_for('liked_warbles', user_id=g.user.id))
+
+@app.route('/users/<int:user_id>/liked_warbles', methods=['POST', 'GET'])
+def liked_warbles(user_id):
+    if not g.user:
+        flash('Access Unauthorized', 'DANGER!!')
+        return redirect('/')
+    user = User.query.get_or_404(user_id)
+    return render_template('users/liked.html', liked_warbles=user.liked_warbles)
 
 
 ##############################################################################
